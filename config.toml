@@ -1,4 +1,4 @@
-features=["trip_distance", "driver_distance", "event_hour", "driver_gps_accuracy", "is_rush_hour", "distance_ratio"]
+features=["trip_distance", "driver_distance", "event_hour", "driver_gps_accuracy", "is_rush_hour"]
 target="is_completed"
 test_size=0.2
 

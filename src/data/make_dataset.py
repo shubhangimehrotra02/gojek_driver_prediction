@@ -53,7 +53,7 @@ def process_test_data(store):
 
     # Add new features: is_rush_hour and distance_ratio
     df_test = add_rush_hour_feature(df_test)
-    df_test = add_distance_ratio(df_test)
+    # df_test = add_distance_ratio(df_test)
 
     # Save the processed test dataset
     store.put_processed("test_data.csv", df_test)
