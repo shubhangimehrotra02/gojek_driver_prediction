@@ -26,6 +26,7 @@ def clean_booking_df(df: pd.DataFrame) -> pd.DataFrame:
         "trip_distance",
         "pickup_latitude",
         "pickup_longitude",
+        "booking_status"
     ]
     df = df.drop_duplicates(subset=unique_columns)
     return df[unique_columns]

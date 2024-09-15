@@ -21,7 +21,22 @@ def hour_of_day(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def driver_historical_completed_bookings(df: pd.DataFrame) -> pd.DataFrame:
-    raise NotImplementedError(
-        f"Show us your feature engineering skills! Suppose that drivers with a good track record are more likely to accept bookings. "
-        f"Implement a feature that describes the number of historical bookings that each driver has completed."
-    )
+    # Check if 'booking_status' exists
+    if 'booking_status' in df.columns:
+        # Filter only the completed bookings
+        completed_bookings = df[df['booking_status'] == 'COMPLETED']
+
+        # Count the number of completed bookings per driver
+        driver_completed_bookings = completed_bookings.groupby('driver_id').size().reset_index(name='historical_completed_bookings')
+
+        # Merge the counts back into the original dataframe
+        df = pd.merge(df, driver_completed_bookings, on='driver_id', how='left')
+
+    # If 'historical_completed_bookings' doesn't exist, create it and set to 0
+    if 'historical_completed_bookings' not in df.columns:
+        df['historical_completed_bookings'] = 0
+
+    # Fill NaN values with 0 (if there were drivers with no completed bookings)
+    df['historical_completed_bookings'] = df['historical_completed_bookings'].fillna(0)
+
+    return df
