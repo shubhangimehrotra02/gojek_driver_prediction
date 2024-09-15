@@ -15,7 +15,12 @@ def main():
     df = store.get_processed("transformed_dataset.csv")
     df_train, df_test = train_test_split(df, test_size=config["test_size"])
 
-    rf_estimator = RandomForestClassifier(**config["random_forest"])
+    rf_estimator = RandomForestClassifier(
+    n_estimators=config["random_forest"]["n_estimators"],
+    max_depth=config["random_forest"]["max_depth"],
+    min_samples_split=config["random_forest"]["min_samples_split"],
+    class_weight='balanced')
+    
     model = SklearnClassifier(rf_estimator, config["features"], config["target"])
     model.train(df_train)
 
