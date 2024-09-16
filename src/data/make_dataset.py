@@ -32,12 +32,8 @@ def process_training_data(store, config):
     # Create the target column
     dataset = create_target(dataset, config["target"])
 
-    # Add new feature: driver_distance
-    dataset = add_driver_distance(dataset)
-
-    # Add new features: is_rush_hour and distance_ratio
-    dataset = add_rush_hour_feature(dataset)
-    dataset = add_distance_ratio(dataset)
+    # Add feature engineering
+    dataset = feature_engineering(dataset)
 
     # Save the processed training dataset
     store.put_processed("dataset.csv", dataset)
@@ -48,12 +44,8 @@ def process_test_data(store):
     df_test = store.get_raw("test_data.csv")
     print("Test data loaded:", df_test.shape)
 
-    # Add new feature: driver_distance
-    df_test = add_driver_distance(df_test)
-
-    # Add new features: is_rush_hour and distance_ratio
-    df_test = add_rush_hour_feature(df_test)
-    # df_test = add_distance_ratio(df_test)
+    # Feature engineering for test data
+    df_test = feature_engineering(df_test)
 
     # Save the processed test dataset
     store.put_processed("test_data.csv", df_test)
@@ -83,6 +75,7 @@ def create_target(df: pd.DataFrame, target_col: str) -> pd.DataFrame:
     df[target_col] = df["participant_status"].apply(lambda x: int(x == "ACCEPTED"))
     return df
 
+# Haversine function for distance calculation
 def haversine(lat1, lon1, lat2, lon2):
     R = 6371  # Earth radius in kilometers
     lat1 = np.radians(lat1)
@@ -97,6 +90,25 @@ def haversine(lat1, lon1, lat2, lon2):
     c = 2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a))
 
     return R * c  # Distance in kilometers
+
+# Feature Engineering: Adds new features to the dataset
+def feature_engineering(df):
+    # Add driver distance
+    df = add_driver_distance(df)
+
+    # Add rush hour feature
+    df = add_rush_hour_feature(df)
+
+    # Add distance ratio
+    df = add_distance_ratio(df)
+
+    # Add time of day feature
+    df = add_time_of_day(df)
+
+    # Add interaction features
+    df['trip_driver_interaction'] = df['trip_distance'] * df['driver_distance']
+
+    return df
 
 # Add driver distance feature
 def add_driver_distance(df):
@@ -115,6 +127,20 @@ def add_rush_hour_feature(df):
 # Add distance ratio feature
 def add_distance_ratio(df):
     df['distance_ratio'] = df['trip_distance'] / (df['driver_distance'] + 1)  # Avoid division by zero
+    return df
+
+# Add time of day feature (morning, afternoon, evening, night)
+def add_time_of_day(df):
+    def time_of_day(hour):
+        if 5 <= hour < 12:
+            return "morning"
+        elif 12 <= hour < 17:
+            return "afternoon"
+        elif 17 <= hour < 21:
+            return "evening"
+        else:
+            return "night"
+    df['time_of_day'] = df['event_hour'].apply(time_of_day)
     return df
 
 if __name__ == "__main__":

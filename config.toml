@@ -1,12 +1,13 @@
-features=["trip_distance", "driver_distance", "event_hour", "driver_gps_accuracy", "is_rush_hour"]
+features=["trip_distance", "driver_distance", "event_hour", "driver_gps_accuracy","is_rush_hour"]
 target="is_completed"
 test_size=0.2
 
-[random_forest]
-n_estimators=150
-max_depth=8
-min_samples_split=5
-min_samples_leaf=2
-n_jobs=-1
-random_state=33
-bootstrap=true
+[xgboost]
+n_estimators=1000                # Keep a moderate number of trees
+max_depth=3                     # Reduce the depth to prevent overfitting
+learning_rate=0.01              # Use a slower learning rate for stable learning
+subsample=0.03                  # Keep the same subsample ratio
+colsample_bytree=0.03           # Keep the same feature subsampling ratio
+scale_pos_weight=1.1955         # Keep the class imbalance adjustment
+test_size=0.2
+random_state=20

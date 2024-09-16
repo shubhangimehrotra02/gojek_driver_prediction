@@ -16,7 +16,7 @@ def main():
     dataset = store.get_processed("dataset.csv")
 
     # Select the columns you want to analyze for correlation
-    columns_to_analyze = ['trip_distance', 'driver_distance', 'distance_ratio']
+    columns_to_analyze = ['trip_distance', 'driver_distance', 'distance_ratio', "event_hour", "driver_gps_accuracy","is_rush_hour"]
 
     # Calculate the correlation matrix
     corr_matrix = dataset[columns_to_analyze].corr()
