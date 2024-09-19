@@ -1,13 +1,38 @@
-features=["trip_distance", "driver_distance", "event_hour", "driver_gps_accuracy","is_rush_hour"]
-target="is_completed"
-test_size=0.2
+test_size = 0.2
+features = ["trip_distance", "driver_distance", "event_hour", "driver_gps_accuracy"]
+target = "is_completed"
 
 [xgboost]
-n_estimators=1000                # Keep a moderate number of trees
-max_depth=3                     # Reduce the depth to prevent overfitting
-learning_rate=0.01              # Use a slower learning rate for stable learning
-subsample=0.03                  # Keep the same subsample ratio
-colsample_bytree=0.03           # Keep the same feature subsampling ratio
-scale_pos_weight=1.1955         # Keep the class imbalance adjustment
-test_size=0.2
+n_estimators = [100]                # Number of trees (start small)
+max_depth = [3, 5]                  # Adjust tree depth to 3 and 5
+learning_rate = [0.01]              # Learning rate (keep small)
+subsample = [0.8]                   # Subsample size
+colsample_bytree = [0.8]            # Column subsampling
+random_state = 42                   # Ensuring reproducibility
+
+# Random Forest Hyperparameters for Tuning
+[random_forest]
+n_estimators = [100, 300]           # Reduced number of trees for faster tuning
+max_depth = [10, 20]                # Depth of trees
+min_samples_split = [2]             # Minimum samples required to split an internal node
+min_samples_leaf = [1]              # Minimum samples at a leaf node
+random_state = 42                   # Ensuring reproducibility
+max_features = ['auto', 'sqrt']     # Feature selection strategy
+
+# Logistic Regression Hyperparameters
+[logistic_regression]
+class_weight="balanced"
+solver="lbfgs"       # Changed solver
+max_iter=1000       # Increased max_iter
+n_jobs=-1        # Utilize all available CPU cores
 random_state=20
+verbose=1              # Enable verbose output for monitoring          # Ensuring reproducibility
+
+# Grid Search Configuration
+[grid_search]
+cv = 3                              # Cross-validation folds (reduce for faster runs)
+n_jobs = -1                         # Use all available cores
+verbose = 2                         # Verbosity level for output
+
+# Dataset parameters
+[dataset]

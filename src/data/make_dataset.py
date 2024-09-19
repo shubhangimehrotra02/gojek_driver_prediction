@@ -2,10 +2,14 @@ import pandas as pd
 import numpy as np
 from src.utils.config import load_config
 from src.utils.store import AssignmentStore
+import logging
+
 
 def main():
     store = AssignmentStore()
     config = load_config()
+
+    print(config)
 
     # Process Training Data
     process_training_data(store, config)
