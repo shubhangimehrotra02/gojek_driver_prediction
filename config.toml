@@ -1,38 +1,23 @@
-test_size = 0.2
-features = ["trip_distance", "driver_distance", "event_hour", "driver_gps_accuracy"]
-target = "is_completed"
+features=["driver_gps_accuracy",
+    "trip_distance",
+    "hourofday",
+    "hourofday_average",
+    "driver_hourofday_average",
+    "dayofweek",
+    "dayofweek_average",
+    "driver_dayofweek_average",
+    "is_completed_last5day_rolling_mean",
+    "driver_cluster_label",
+    "customer_cluster_label"
+    ]
 
-[xgboost]
-n_estimators = [100]                # Number of trees (start small)
-max_depth = [3, 5]                  # Adjust tree depth to 3 and 5
-learning_rate = [0.01]              # Learning rate (keep small)
-subsample = [0.8]                   # Subsample size
-colsample_bytree = [0.8]            # Column subsampling
-random_state = 42                   # Ensuring reproducibility
+target="is_completed"
+test_size=0.2
 
-# Random Forest Hyperparameters for Tuning
 [random_forest]
-n_estimators = [100, 300]           # Reduced number of trees for faster tuning
-max_depth = [10, 20]                # Depth of trees
-min_samples_split = [2]             # Minimum samples required to split an internal node
-min_samples_leaf = [1]              # Minimum samples at a leaf node
-random_state = 42                   # Ensuring reproducibility
-max_features = ['auto', 'sqrt']     # Feature selection strategy
-
-# Logistic Regression Hyperparameters
-[logistic_regression]
+n_estimators=200
+max_depth=32
+n_jobs=-1
+random_state=33
+criterion='gini'
 class_weight="balanced"
-solver="lbfgs"       # Changed solver
-max_iter=1000       # Increased max_iter
-n_jobs=-1        # Utilize all available CPU cores
-random_state=20
-verbose=1              # Enable verbose output for monitoring          # Ensuring reproducibility
-
-# Grid Search Configuration
-[grid_search]
-cv = 3                              # Cross-validation folds (reduce for faster runs)
-n_jobs = -1                         # Use all available cores
-verbose = 2                         # Verbosity level for output
-
-# Dataset parameters
-[dataset]

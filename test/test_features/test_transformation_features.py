@@ -1,9 +1,8 @@
 import unittest
-
 import pandas as pd
 from nose.tools import raises
 
-from src.features.transformations import driver_distance_to_pickup, hour_of_day
+from src.features.transformations import driver_distance_to_pickup, temporal_features
 
 
 class TestTransformationFeatures(unittest.TestCase):
@@ -24,15 +23,18 @@ class TestTransformationFeatures(unittest.TestCase):
 
         self.assertRaises(TypeError, driver_distance_to_pickup(df.astype(str)))
 
-    def test_hour_of_day(self):
-        df = pd.DataFrame({"event_timestamp": ["2015-05-12 05:25:23.904 UTC"]})
-        got = hour_of_day(df)
-        self.assertIn("event_hour", got.columns)
-        self.assertEqual(len(got.columns), 2)
-        self.assertEqual(got["event_hour"].tolist(), [5])
+    def test_temporal_features(self):
+        df = pd.DataFrame({"event_timestamp": ["2015-05-12 05:25:23.904000+00:00"]})
+        got = temporal_features(df)
+        self.assertIn("hourofday", got.columns)
+        self.assertIn("dayofweek", got.columns)
+        self.assertIn("is_busy_hour", got.columns)
+        self.assertEqual(len(got.columns), 6)  # 'event_timestamp', 'date', 'hourofday', 'dayofweek', 'is_busy_hour', 'hourly_bins'
+        self.assertEqual(got["hourofday"].tolist(), [10])  # Assuming the timezone conversion
 
     @raises(KeyError)
     def test_transform_with_invalid_key(self):
         df = pd.DataFrame({"invalid_key": [1, 2, 3]})
         self.assertRaises(KeyError, driver_distance_to_pickup(df))
-        self.assertRaises(KeyError, hour_of_day(df))
+        self.assertRaises(KeyError, temporal_features(df))
+
